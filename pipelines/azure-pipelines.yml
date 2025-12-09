@@ -108,14 +108,14 @@ stages:
         artifact: 'terraform-plan'
         publishLocation: 'pipeline'
 
-- stage: Deploy_Dev
-  displayName: 'Deploy to Development'
-  dependsOn: Plan
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
-  variables:
-    - name: environment
-      value: 'dev'
-  jobs:
+# - stage: Deploy_Dev
+#   displayName: 'Deploy to Development'
+#   dependsOn: Plan
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+#   variables:
+#     - name: environment
+#       value: 'dev'
+#   jobs:
   # - deployment: Deploy
   #   displayName: 'Deploy to Dev Environment'
   #   environment: 'Development'
