@@ -1,4 +1,4 @@
- url=https://github.com/VinayakGlobant/Azure-Monitoring/blob/e2050d85c1ab7b4aaed32d3f61aca74374d32f3a/terraform/workbook.tf
+
 # Azure Workbook with inline configuration
 # Generate UUID names for the workbooks (Azure expects the workbook resource "name" to be a UUID)
 resource "random_uuid" "main" {}
