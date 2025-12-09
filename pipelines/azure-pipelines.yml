@@ -43,7 +43,7 @@ stages:
         provider: 'azurerm'
         command: 'init'
         workingDirectory: $(workingDirectory)
-        backendServiceArm: 'Azure-Service-Connection'
+        backendServiceArm: 'VS Professional Subscription-Nitin Pradhan'
         backendAzureRmResourceGroupName: $(backendResourceGroup)
         backendAzureRmStorageAccountName: $(backendStorageAccount)
         backendAzureRmContainerName: $(backendContainer)
@@ -85,7 +85,7 @@ stages:
         provider: 'azurerm'
         command: 'init'
         workingDirectory: $(workingDirectory)
-        backendServiceArm: 'Azure-Service-Connection'
+        backendServiceArm: 'VS Professional Subscription-Nitin Pradhann'
         backendAzureRmResourceGroupName: $(backendResourceGroup)
         backendAzureRmStorageAccountName: $(backendStorageAccount)
         backendAzureRmContainerName: $(backendContainer)
@@ -98,7 +98,7 @@ stages:
         command: 'plan'
         workingDirectory: $(workingDirectory)
         commandOptions: '-out=tfplan -input=false'
-        environmentServiceNameAzureRM: 'Azure-Service-Connection'
+        environmentServiceNameAzureRM: 'VS Professional Subscription-Nitin Pradhan'
         publishPlanResults: 'tfplan'
     
     - task: PublishPipelineArtifact@1
@@ -116,45 +116,45 @@ stages:
     - name: environment
       value: 'dev'
   jobs:
-  - deployment: Deploy
-    displayName: 'Deploy to Dev Environment'
-    environment: 'Development'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: DownloadPipelineArtifact@2
-            displayName: 'Download Terraform Plan'
-            inputs:
-              buildType: 'current'
-              artifactName: 'terraform-plan'
-              targetPath: $(workingDirectory)
+  # - deployment: Deploy
+  #   displayName: 'Deploy to Dev Environment'
+  #   environment: 'Development'
+  #   strategy:
+  #     runOnce:
+  #       deploy:
+  #         steps:
+  #         - task: DownloadPipelineArtifact@2
+  #           displayName: 'Download Terraform Plan'
+  #           inputs:
+  #             buildType: 'current'
+  #             artifactName: 'terraform-plan'
+  #             targetPath: $(workingDirectory)
           
-          - task: TerraformInstaller@0
-            displayName: 'Install Terraform'
-            inputs:
-              terraformVersion: $(terraformVersion)
+  #         - task: TerraformInstaller@0
+  #           displayName: 'Install Terraform'
+  #           inputs:
+  #             terraformVersion: $(terraformVersion)
           
-          - task: TerraformTaskV3@3
-            displayName: 'Terraform Init'
-            inputs:
-              provider: 'azurerm'
-              command: 'init'
-              workingDirectory: $(workingDirectory)
-              backendServiceArm: 'Azure-Service-Connection'
-              backendAzureRmResourceGroupName: $(backendResourceGroup)
-              backendAzureRmStorageAccountName: $(backendStorageAccount)
-              backendAzureRmContainerName: $(backendContainer)
-              backendAzureRmKey: 'dev-$(backendKey)'
+  #         - task: TerraformTaskV3@3
+  #           displayName: 'Terraform Init'
+  #           inputs:
+  #             provider: 'azurerm'
+  #             command: 'init'
+  #             workingDirectory: $(workingDirectory)
+  #             backendServiceArm: 'VS Professional Subscription-Nitin Pradhan'
+  #             backendAzureRmResourceGroupName: $(backendResourceGroup)
+  #             backendAzureRmStorageAccountName: $(backendStorageAccount)
+  #             backendAzureRmContainerName: $(backendContainer)
+  #             backendAzureRmKey: 'dev-$(backendKey)'
           
-          - task: TerraformTaskV3@3
-            displayName: 'Terraform Apply'
-            inputs:
-              provider: 'azurerm'
-              command: 'apply'
-              workingDirectory: $(workingDirectory)
-              commandOptions: '-auto-approve -input=false -var="resource_group_name=monitoring-rg-dev"'
-              environmentServiceNameAzureRM: 'Azure-Service-Connection'
+  #         - task: TerraformTaskV3@3
+  #           displayName: 'Terraform Apply'
+  #           inputs:
+  #             provider: 'azurerm'
+  #             command: 'apply'
+  #             workingDirectory: $(workingDirectory)
+  #             commandOptions: '-auto-approve -input=false -var="resource_group_name=monitoring-rg-dev"'
+  #             environmentServiceNameAzureRM: 'VS Professional Subscription-Nitin Pradhan'
 
 - stage: Deploy_Prod
   displayName: 'Deploy to Production'
@@ -189,7 +189,7 @@ stages:
               provider: 'azurerm'
               command: 'init'
               workingDirectory: $(workingDirectory)
-              backendServiceArm: 'Azure-Service-Connection'
+              backendServiceArm: 'VS Professional Subscription-Nitin Pradhan'
               backendAzureRmResourceGroupName: $(backendResourceGroup)
               backendAzureRmStorageAccountName: $(backendStorageAccount)
               backendAzureRmContainerName: $(backendContainer)
@@ -202,4 +202,4 @@ stages:
               command: 'apply'
               workingDirectory: $(workingDirectory)
               commandOptions: '-auto-approve -input=false -var="resource_group_name=monitoring-rg-prod"'
-              environmentServiceNameAzureRM: 'Azure-Service-Connection'
+              environmentServiceNameAzureRM: 'VS Professional Subscription-Nitin Pradhan'
