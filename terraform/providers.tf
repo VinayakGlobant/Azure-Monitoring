@@ -19,4 +19,7 @@ provider "azurerm" {
       prevent_deletion_if_contains_resources = false
     }
   }
+
+  # ✅ This tells Terraform not to auto‑register Azure resource providers
+  skip_provider_registration = true
 }
