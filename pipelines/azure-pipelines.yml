@@ -17,9 +17,9 @@ variables:
   - name: workingDirectory
     value: '$(System.DefaultWorkingDirectory)/terraform'
   - name: backendResourceGroup
-    value: 'terraform-state-rg'
+    value: 'tfstate-rg-monitoring'
   - name: backendStorageAccount
-    value: 'tfstatestore'
+    value: 'tfstatestoracct02'
   - name: backendContainer
     value: 'tfstate'
   - name: backendKey
