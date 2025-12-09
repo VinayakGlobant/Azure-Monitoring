@@ -84,7 +84,7 @@ stages:
         provider: 'azurerm'
         command: 'init'
         workingDirectory: $(workingDirectory)
-        backendServiceArm: 'VS Professional Subscription-Nitin Pradhann'
+        backendServiceArm: 'VS Professional Subscription-Nitin Pradhan'
         backendAzureRmResourceGroupName: $(backendResourceGroup)
         backendAzureRmStorageAccountName: $(backendStorageAccount)
         backendAzureRmContainerName: $(backendContainer)
