@@ -54,42 +54,7 @@ stages:
         provider: 'azurerm'
         command: 'validate'
         workingDirectory: $(workingDirectory)
-    
-    - task: TerraformTaskV3@3
-      displayName: 'Terraform Format Check'
-      inputs:
-        provider: 'azurerm'
-        command: 'custom'
-        customCommand: 'fmt'
-        commandOptions: '-check -recursive'
-        workingDirectory: $(workingDirectory)
-      continueOnError: true
-
-- stage: Plan
-  displayName: 'Terraform Plan'
-  dependsOn: Validate
-  condition: succeeded()
-  jobs:
-  - job: Plan
-    displayName: 'Create Terraform Plan'
-    steps:
-    - task: TerraformInstaller@0
-      displayName: 'Install Terraform'
-      inputs:
-        terraformVersion: $(terraformVersion)
-    
-    - task: TerraformTaskV3@3
-      displayName: 'Terraform Init'
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-        workingDirectory: $(workingDirectory)
-        backendServiceArm: 'VS Professional Subscription-Nitin Pradhan'
-        backendAzureRmResourceGroupName: $(backendResourceGroup)
-        backendAzureRmStorageAccountName: $(backendStorageAccount)
-        backendAzureRmContainerName: $(backendContainer)
-        backendAzureRmKey: $(backendKey)
-    
+        
     - task: TerraformTaskV3@3
       displayName: 'Terraform Plan'
       inputs:
@@ -105,7 +70,44 @@ stages:
       inputs:
         targetPath: $(workingDirectory)
         artifact: 'terraform-plan'
-        publishLocation: 'pipeline'
+        publishLocation: 'pipeline'    
+        
+#     - task: TerraformTaskV3@3
+#       displayName: 'Terraform Format Check'
+#       inputs:
+#         provider: 'azurerm'
+#         command: 'custom'
+#         customCommand: 'fmt'
+#         commandOptions: '-check -recursive'
+#         workingDirectory: $(workingDirectory)
+#       continueOnError: true
+
+# - stage: Plan
+#   displayName: 'Terraform Plan'
+#   dependsOn: Validate
+#   condition: succeeded()
+#   jobs:
+#   - job: Plan
+#     displayName: 'Create Terraform Plan'
+#     steps:
+#     - task: TerraformInstaller@0
+#       displayName: 'Install Terraform'
+#       inputs:
+#         terraformVersion: $(terraformVersion)
+    
+#     - task: TerraformTaskV3@3
+#       displayName: 'Terraform Init'
+#       inputs:
+#         provider: 'azurerm'
+#         command: 'init'
+#         workingDirectory: $(workingDirectory)
+#         backendServiceArm: 'VS Professional Subscription-Nitin Pradhan'
+#         backendAzureRmResourceGroupName: $(backendResourceGroup)
+#         backendAzureRmStorageAccountName: $(backendStorageAccount)
+#         backendAzureRmContainerName: $(backendContainer)
+#         backendAzureRmKey: $(backendKey)
+    
+
 
 # - stage: Deploy_Dev
 #   displayName: 'Deploy to Development'
