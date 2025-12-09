@@ -1,4 +1,4 @@
-resource_group_name          = "monitoring-prod-rg"
+var.resource_group_name          = "monitoring-prod-rg"
 location                     = "East US"
 app_insights_name            = "myapp-prod-insights"
 app_insights_resource_group  = "myapp-prod-rg"
