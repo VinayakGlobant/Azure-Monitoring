@@ -14,10 +14,10 @@ terraform {
 }
 
 provider "azurerm" {
- resource_provider_registrations = "none"
-  features {
-    resource_group {
-      prevent_deletion_if_contains_resources = false
-    }
+  features {}
+
+  # Prevent Terraform from trying provider registration (avoid unsupported arguments)
+  skip_provider_registration = true
+}
   }
 }
