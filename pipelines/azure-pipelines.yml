@@ -156,50 +156,50 @@ stages:
   #             commandOptions: '-auto-approve -input=false -var="resource_group_name=monitoring-rg-dev"'
   #             environmentServiceNameAzureRM: 'VS Professional Subscription-Nitin Pradhan'
 
-- stage: Deploy_Prod
-  displayName: 'Deploy to Production'
-  dependsOn: Plan
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-  variables:
-    - name: environment
-      value: 'prod'
-  jobs:
-  - deployment: Deploy
-    displayName: 'Deploy to Production Environment'
-    environment: 'Production'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: DownloadPipelineArtifact@2
-            displayName: 'Download Terraform Plan'
-            inputs:
-              buildType: 'current'
-              artifactName: 'terraform-plan'
-              targetPath: $(workingDirectory)
+# - stage: Deploy_Prod
+#   displayName: 'Deploy to Production'
+#   dependsOn: Plan
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+#   variables:
+#     - name: environment
+#       value: 'prod'
+#   jobs:
+#   - deployment: Deploy
+#     displayName: 'Deploy to Production Environment'
+#     environment: 'Production'
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - task: DownloadPipelineArtifact@2
+#             displayName: 'Download Terraform Plan'
+#             inputs:
+#               buildType: 'current'
+#               artifactName: 'terraform-plan'
+#               targetPath: $(workingDirectory)
           
-          - task: TerraformInstaller@0
-            displayName: 'Install Terraform'
-            inputs:
-              terraformVersion: $(terraformVersion)
+#           - task: TerraformInstaller@0
+#             displayName: 'Install Terraform'
+#             inputs:
+#               terraformVersion: $(terraformVersion)
           
-          - task: TerraformTaskV3@3
-            displayName: 'Terraform Init'
-            inputs:
-              provider: 'azurerm'
-              command: 'init'
-              workingDirectory: $(workingDirectory)
-              backendServiceArm: 'VS Professional Subscription-Nitin Pradhan'
-              backendAzureRmResourceGroupName: $(backendResourceGroup)
-              backendAzureRmStorageAccountName: $(backendStorageAccount)
-              backendAzureRmContainerName: $(backendContainer)
-              backendAzureRmKey: 'prod-$(backendKey)'
+#           - task: TerraformTaskV3@3
+#             displayName: 'Terraform Init'
+#             inputs:
+#               provider: 'azurerm'
+#               command: 'init'
+#               workingDirectory: $(workingDirectory)
+#               backendServiceArm: 'VS Professional Subscription-Nitin Pradhan'
+#               backendAzureRmResourceGroupName: $(backendResourceGroup)
+#               backendAzureRmStorageAccountName: $(backendStorageAccount)
+#               backendAzureRmContainerName: $(backendContainer)
+#               backendAzureRmKey: 'prod-$(backendKey)'
           
-          - task: TerraformTaskV3@3
-            displayName: 'Terraform Apply'
-            inputs:
-              provider: 'azurerm'
-              command: 'apply'
-              workingDirectory: $(workingDirectory)
-              commandOptions: '-auto-approve -input=false -var="resource_group_name=monitoring-rg-prod"'
-              environmentServiceNameAzureRM: 'VS Professional Subscription-Nitin Pradhan'
+#           - task: TerraformTaskV3@3
+#             displayName: 'Terraform Apply'
+#             inputs:
+#               provider: 'azurerm'
+#               command: 'apply'
+#               workingDirectory: $(workingDirectory)
+#               commandOptions: '-auto-approve -input=false -var="resource_group_name=monitoring-rg-prod"'
+#               environmentServiceNameAzureRM: 'VS Professional Subscription-Nitin Pradhan'
