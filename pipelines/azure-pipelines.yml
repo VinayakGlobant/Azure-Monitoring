@@ -1,0 +1,205 @@
+trigger:
+  branches:
+    include:
+    - main
+    - develop
+  paths:
+    include:
+    - terraform/*
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: terraform-variables
+  - name: terraformVersion
+    value: '1.5.0'
+  - name: workingDirectory
+    value: '$(System.DefaultWorkingDirectory)/terraform'
+  - name: backendResourceGroup
+    value: 'terraform-state-rg'
+  - name: backendStorageAccount
+    value: 'tfstatestore'
+  - name: backendContainer
+    value: 'tfstate'
+  - name: backendKey
+    value: 'monitoring.terraform.tfstate'
+
+stages:
+- stage: Validate
+  displayName: 'Terraform Validate'
+  jobs:
+  - job: Validate
+    displayName: 'Validate Terraform Configuration'
+    steps:
+    - task: TerraformInstaller@0
+      displayName: 'Install Terraform'
+      inputs:
+        terraformVersion: $(terraformVersion)
+    
+    - task: TerraformTaskV3@3
+      displayName: 'Terraform Init'
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: $(workingDirectory)
+        backendServiceArm: 'Azure-Service-Connection'
+        backendAzureRmResourceGroupName: $(backendResourceGroup)
+        backendAzureRmStorageAccountName: $(backendStorageAccount)
+        backendAzureRmContainerName: $(backendContainer)
+        backendAzureRmKey: $(backendKey)
+    
+    - task: TerraformTaskV3@3
+      displayName: 'Terraform Validate'
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+        workingDirectory: $(workingDirectory)
+    
+    - task: TerraformTaskV3@3
+      displayName: 'Terraform Format Check'
+      inputs:
+        provider: 'azurerm'
+        command: 'custom'
+        customCommand: 'fmt'
+        commandOptions: '-check -recursive'
+        workingDirectory: $(workingDirectory)
+      continueOnError: true
+
+- stage: Plan
+  displayName: 'Terraform Plan'
+  dependsOn: Validate
+  condition: succeeded()
+  jobs:
+  - job: Plan
+    displayName: 'Create Terraform Plan'
+    steps:
+    - task: TerraformInstaller@0
+      displayName: 'Install Terraform'
+      inputs:
+        terraformVersion: $(terraformVersion)
+    
+    - task: TerraformTaskV3@3
+      displayName: 'Terraform Init'
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: $(workingDirectory)
+        backendServiceArm: 'Azure-Service-Connection'
+        backendAzureRmResourceGroupName: $(backendResourceGroup)
+        backendAzureRmStorageAccountName: $(backendStorageAccount)
+        backendAzureRmContainerName: $(backendContainer)
+        backendAzureRmKey: $(backendKey)
+    
+    - task: TerraformTaskV3@3
+      displayName: 'Terraform Plan'
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: $(workingDirectory)
+        commandOptions: '-out=tfplan -input=false'
+        environmentServiceNameAzureRM: 'Azure-Service-Connection'
+        publishPlanResults: 'tfplan'
+    
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Terraform Plan'
+      inputs:
+        targetPath: $(workingDirectory)
+        artifact: 'terraform-plan'
+        publishLocation: 'pipeline'
+
+- stage: Deploy_Dev
+  displayName: 'Deploy to Development'
+  dependsOn: Plan
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+  variables:
+    - name: environment
+      value: 'dev'
+  jobs:
+  - deployment: Deploy
+    displayName: 'Deploy to Dev Environment'
+    environment: 'Development'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadPipelineArtifact@2
+            displayName: 'Download Terraform Plan'
+            inputs:
+              buildType: 'current'
+              artifactName: 'terraform-plan'
+              targetPath: $(workingDirectory)
+          
+          - task: TerraformInstaller@0
+            displayName: 'Install Terraform'
+            inputs:
+              terraformVersion: $(terraformVersion)
+          
+          - task: TerraformTaskV3@3
+            displayName: 'Terraform Init'
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: $(workingDirectory)
+              backendServiceArm: 'Azure-Service-Connection'
+              backendAzureRmResourceGroupName: $(backendResourceGroup)
+              backendAzureRmStorageAccountName: $(backendStorageAccount)
+              backendAzureRmContainerName: $(backendContainer)
+              backendAzureRmKey: 'dev-$(backendKey)'
+          
+          - task: TerraformTaskV3@3
+            displayName: 'Terraform Apply'
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'
+              workingDirectory: $(workingDirectory)
+              commandOptions: '-auto-approve -input=false -var="resource_group_name=monitoring-rg-dev"'
+              environmentServiceNameAzureRM: 'Azure-Service-Connection'
+
+- stage: Deploy_Prod
+  displayName: 'Deploy to Production'
+  dependsOn: Plan
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  variables:
+    - name: environment
+      value: 'prod'
+  jobs:
+  - deployment: Deploy
+    displayName: 'Deploy to Production Environment'
+    environment: 'Production'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadPipelineArtifact@2
+            displayName: 'Download Terraform Plan'
+            inputs:
+              buildType: 'current'
+              artifactName: 'terraform-plan'
+              targetPath: $(workingDirectory)
+          
+          - task: TerraformInstaller@0
+            displayName: 'Install Terraform'
+            inputs:
+              terraformVersion: $(terraformVersion)
+          
+          - task: TerraformTaskV3@3
+            displayName: 'Terraform Init'
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: $(workingDirectory)
+              backendServiceArm: 'Azure-Service-Connection'
+              backendAzureRmResourceGroupName: $(backendResourceGroup)
+              backendAzureRmStorageAccountName: $(backendStorageAccount)
+              backendAzureRmContainerName: $(backendContainer)
+              backendAzureRmKey: 'prod-$(backendKey)'
+          
+          - task: TerraformTaskV3@3
+            displayName: 'Terraform Apply'
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'
+              workingDirectory: $(workingDirectory)
+              commandOptions: '-auto-approve -input=false -var="resource_group_name=monitoring-rg-prod"'
+              environmentServiceNameAzureRM: 'Azure-Service-Connection'

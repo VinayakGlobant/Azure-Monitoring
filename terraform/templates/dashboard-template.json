@@ -1,0 +1,134 @@
+{
+  "lenses": [
+    {
+      "order": 0,
+      "parts": [
+        {
+          "position": {
+            "x": 0,
+            "y": 0,
+            "colSpan": 6,
+            "rowSpan": 4
+          },
+          "metadata": {
+            "inputs": [
+              {
+                "name": "ComponentId",
+                "value": "${app_insights_id}"
+              }
+            ],
+            "type": "Extension/AppInsightsExtension/PartType/MetricsBladePart",
+            "settings": {
+              "content": {
+                "title": "Server Response Time",
+                "metrics": [
+                  {
+                    "metricName": "requests/duration",
+                    "aggregationType": 4
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 6,
+            "y": 0,
+            "colSpan": 6,
+            "rowSpan": 4
+          },
+          "metadata": {
+            "inputs": [
+              {
+                "name": "ComponentId",
+                "value": "${app_insights_id}"
+              }
+            ],
+            "type": "Extension/AppInsightsExtension/PartType/MetricsBladePart",
+            "settings": {
+              "content": {
+                "title": "Request Rate",
+                "metrics": [
+                  {
+                    "metricName": "requests/rate",
+                    "aggregationType": 1
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 0,
+            "y": 4,
+            "colSpan": 6,
+            "rowSpan": 4
+          },
+          "metadata": {
+            "inputs": [
+              {
+                "name": "ComponentId",
+                "value": "${app_insights_id}"
+              }
+            ],
+            "type": "Extension/AppInsightsExtension/PartType/MetricsBladePart",
+            "settings": {
+              "content": {
+                "title": "Failed Requests",
+                "metrics": [
+                  {
+                    "metricName": "requests/failed",
+                    "aggregationType": 1
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 6,
+            "y": 4,
+            "colSpan": 6,
+            "rowSpan": 4
+          },
+          "metadata": {
+            "inputs": [
+              {
+                "name": "ComponentId",
+                "value": "${app_insights_id}"
+              }
+            ],
+            "type": "Extension/AppInsightsExtension/PartType/MetricsBladePart",
+            "settings": {
+              "content": {
+                "title": "Availability",
+                "metrics": [
+                  {
+                    "metricName": "availabilityResults/availabilityPercentage",
+                    "aggregationType": 4
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "model": {
+      "timeRange": {
+        "value": {
+          "relative": {
+            "duration": 24,
+            "timeUnit": 1
+          }
+        },
+        "type": "MsPortalFx.Composition.Configuration.ValueTypes.TimeRange"
+      }
+    }
+  }
+}
