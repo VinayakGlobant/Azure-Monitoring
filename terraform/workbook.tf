@@ -1,6 +1,13 @@
+ url=https://github.com/VinayakGlobant/Azure-Monitoring/blob/e2050d85c1ab7b4aaed32d3f61aca74374d32f3a/terraform/workbook.tf
 # Azure Workbook with inline configuration
+# Generate UUID names for the workbooks (Azure expects the workbook resource "name" to be a UUID)
+resource "random_uuid" "main" {}
+
+resource "random_uuid" "template" {}
+
 resource "azurerm_application_insights_workbook" "main" {
-  name                = "${var.workbook_name}-${var.environment}"
+  # Azure requires the workbook resource name to be a UUID; use random_uuid.result
+  name                = random_uuid.main.result
   resource_group_name = azurerm_resource_group.monitoring.name
   location            = azurerm_resource_group.monitoring.location
   display_name        = var.workbook_display_name
@@ -54,7 +61,7 @@ resource "azurerm_application_insights_workbook" "main" {
         "type" = 3,
         "content" = {
           "version" = "KqlItem/1.0",
-          "query" = "requests\n| where timestamp {TimeRange}\n| summarize TotalRequests = count(), FailedRequests = countif(success == false), SuccessRate = 100.0 - (countif(success == false) * 100.0 / count())\n| project TotalRequests, FailedRequests, SuccessRate = round(SuccessRate, 2)",
+          "query" = "requests\n| where timestamp {TimeRange}\n| summarize TotalRequests = count(), FailedRequests = countif(success == false), SuccessRate = 100.0 - (countif(success == false) * 100.0 [...]
           "size" = 4,
           "title" = "Request Overview",
           "queryType" = 0,
@@ -94,7 +101,7 @@ resource "azurerm_application_insights_workbook" "main" {
         "type" = 3,
         "content" = {
           "version" = "KqlItem/1.0",
-          "query" = "requests\n| where timestamp {TimeRange}\n| summarize Duration = avg(duration), Count = count() by name\n| top 10 by Count desc\n| project Operation = name, Count, AvgDuration = round(Duration, 2)",
+          "query" = "requests\n| where timestamp {TimeRange}\n| summarize Duration = avg(duration), Count = count() by name\n| top 10 by Count desc\n| project Operation = name, Count, AvgDuration = ro[...]
           "size" = 0,
           "title" = "Top 10 Operations",
           "queryType" = 0,
@@ -143,7 +150,8 @@ resource "azurerm_application_insights_workbook" "main" {
 
 # Workbook from template file
 resource "azurerm_application_insights_workbook" "template" {
-  name                = "${var.workbook_name}-advanced-${var.environment}"
+  # Azure requires the workbook resource name to be a UUID; use random_uuid.result
+  name                = random_uuid.template.result
   resource_group_name = azurerm_resource_group.monitoring.name
   location            = azurerm_resource_group.monitoring.location
   display_name        = "${var.workbook_display_name} - Advanced"
